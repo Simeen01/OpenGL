@@ -1,0 +1,120 @@
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+#include <math.h>
+GLfloat xRotated, yRotated, zRotated;
+void display(void);
+void idle(void)
+{
+ xRotated =xRotated + 0.01;
+ yRotated += 0.01;
+ zRotated += 0.01;
+ display();
+}
+void myinit()
+{
+ glClearColor(0.0f,0.0f, 0.0f, 0.0f);
+ glColor3f(1,1,0);
+ glPointSize(2.0f);
+ glMatrixMode(GL_PROJECTION);
+ glLoadIdentity();
+ gluOrtho2D(0,640,0,480);
+ GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+ GLfloat mat_shininess[] = { 80.0 };
+ GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+ glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+ glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+ glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+ glEnable(GL_LIGHTING);
+ glEnable(GL_LIGHT0);
+ glEnable(GL_DEPTH_TEST);
+}
+void display(void)
+{
+ glClear(GL_COLOR_BUFFER_BIT);
+ glBegin(GL_POINTS);
+
+ int i;
+ for(i=0;i<75;i++)
+ {
+ glColor3ub(255,255,255); //[0-255]
+ glVertex2i(rand()%640, rand()%480);
+ }
+
+ glEnd();
+ glFlush();
+
+ glClearColor(0,0,0,0);
+ glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+ glMatrixMode(GL_MODELVIEW);
+ glClear(GL_COLOR_BUFFER_BIT);
+ glLoadIdentity();
+ glTranslatef(0.0,0.0,-5.0);
+
+ glBegin(GL_POLYGON);
+ glColor3f(0.0f, 1.0f, 0.0f);
+ glVertex3f( 1.0f, 1.0f, -1.0f);
+ glVertex3f(-1.0f, 1.0f, -1.0f);
+ glVertex3f(-1.0f, 1.0f, 1.0f);
+ glVertex3f( 1.0f, 1.0f, 1.0f);
+ glColor3f(1.0f, 0.5f, 0.0f);
+ glVertex3f( 1.0f, -1.0f, 1.0f);
+ glVertex3f(-1.0f, -1.0f, 1.0f);
+ glVertex3f(-1.0f, -1.0f, -1.0f);
+ glVertex3f( 1.0f, -1.0f, -1.0f);
+ glColor3f(1.0f, 0.0f, 0.0f);
+ glVertex3f( 1.0f, 1.0f, 1.0f);
+ glVertex3f(-1.0f, 1.0f, 1.0f);
+ glVertex3f(-1.0f, -1.0f, 1.0f);
+ glVertex3f( 1.0f, -1.0f, 1.0f);
+ glColor3f(1.0f, 1.0f, 0.0f);
+ glVertex3f( 1.0f, -1.0f, -1.0f);
+ glVertex3f(-1.0f, -1.0f, -1.0f);
+ glVertex3f(-1.0f, 1.0f, -1.0f);
+ glVertex3f( 1.0f, 1.0f, -1.0f);
+
+ glColor3f(0.0f, 0.0f, 1.0f);
+ glVertex3f(-1.0f, 1.0f, 1.0f);
+ glVertex3f(-1.0f, 1.0f, -1.0f);
+ glVertex3f(-1.0f, -1.0f, -1.0f);
+ glVertex3f(-1.0f, -1.0f, 1.0f);
+ glColor3f(1.0f, 0.0f, 1.0f);
+ glVertex3f(1.0f, 1.0f, -1.0f);
+ glVertex3f(1.0f, 1.0f, 1.0f);
+ glVertex3f(1.0f, -1.0f, 1.0f);
+ glVertex3f(1.0f, -1.0f, -1.0f);
+ glEnd();
+ glRotatef(xRotated,1.0,0.0,0.0);
+ glRotatef(yRotated,0.0,1.0,0.0);
+ glRotatef(zRotated,0.0,0.0,1.0);
+ glScalef(0.9,0.9,0.9);
+ glutSolidDodecahedron();
+
+ glFlush();
+}
+void reshape(GLsizei w, GLsizei h)
+{
+ glViewport(0, 0, w, h);
+ glMatrixMode(GL_PROJECTION);
+ glLoadIdentity();
+ glOrtho (-1.5, 1.5, -1.5*(GLfloat)480/(GLfloat)640,
+ 1.5*(GLfloat)480/(GLfloat)640, -10.0, 10.0);
+ glMatrixMode(GL_MODELVIEW);
+ glLoadIdentity();
+}
+int main(int argc,char** argv)
+{
+ glutInit(&argc,argv);
+ glutInitWindowSize (640,480);
+ glutInitWindowPosition (200,200);
+ glutInitDisplayMode (GLUT_SINGLE | GLUT_RGBA |GLUT_DEPTH);
+ xRotated = yRotated = zRotated = 60.0;
+ xRotated=73;
+ yRotated=80;
+ glutCreateWindow("FANCY DESINGED THUNDER DODECAHEDRON");
+ glutDisplayFunc(display);
+ glutReshapeFunc(reshape);
+ myinit();
+ glutIdleFunc(idle);
+ glutMainLoop();
+}
